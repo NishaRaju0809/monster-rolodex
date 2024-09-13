@@ -1,13 +1,15 @@
 import { Component } from "react";
 
-import logo from "./logo.svg";
 import "./App.css";
+import ListCard from "./components/ListCard";
+import SearchInput from "./components/SearchInput";
 
 class App extends Component {
   constructor() {
     super();
     this.state = {
       monsters: [],
+      searchedField: "",
     };
   }
   componentDidMount() {
@@ -19,17 +21,27 @@ class App extends Component {
         });
       });
   }
+  onSearchChange = (event) => {
+    const searchedField = event.target.value.toLowerCase();
+    console.log("searchedField:", searchedField);
+    this.setState({
+      searchedField: searchedField,
+    });
+  };
 
   render() {
+    const { onSearchChange } = this;
+    const { searchedField, monsters } = this.state;
+
+    const filteredMonsters = monsters.filter((monster) =>
+      monster.name.toLowerCase().includes(searchedField)
+    );
+
     return (
       <div className="App">
-        {this.state.monsters.map((monster) => {
-          return (
-            <div key={monster?.id}>
-              <h1>{monster?.name}</h1>
-            </div>
-          );
-        })}
+        <h1 className="app-title">Monsters Rolodex</h1>
+        <SearchInput onSearchChange={onSearchChange} />
+        <ListCard monsters={filteredMonsters} />
       </div>
     );
   }
